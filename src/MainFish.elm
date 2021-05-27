@@ -21,16 +21,24 @@ main : Svg msg
 main =
     let
         box =
-            { a = { x = 125.0, y = 75.0 }
-            , b = { x = 250.0, y = 0.0 }
-            , c = { x = 0.0, y = 250.0 }
+            { a = { x = 50.0, y = 50.0 }
+            , b = { x = 500.0, y = 0.0 }
+            , c = { x = 0.0, y = 500.0 }
             }
 
         fish =
             createPicture fishShapes
     in
     box
-        |> fish
-        |> toSvgWithBoxes ( 500, 500 )
-            [ box ]
+        |> squareLimit 4 fish
+        --|> squareLimit 4 (P.turns 2 (createPicture george))
+        --|> corner 3 fish
+        --|> side 3 fish
+        --|> utile fish
+        --|> ttile fish
+        |> toSvgWithBoxes ( 600, 600 )
+            []
+        -- [ box
+        -- , box |> flipBox |> tossBox
+        -- ]
         |> placeInsideDiv

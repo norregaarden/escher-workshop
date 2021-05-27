@@ -144,8 +144,8 @@ nonet nw nm ne mw mm me sw sm se =
 
 
 over : Picture -> Picture -> Picture
-over p1 p2 =
-    blank
+over =
+    ontop
 
 
 
@@ -154,7 +154,7 @@ over p1 p2 =
 
 ttile : Picture -> Picture
 ttile fish =
-    blank
+    over fish (over (fish |> toss |> flip) (fish |> toss |> flip |> turns 3))
 
 
 
@@ -163,7 +163,20 @@ ttile fish =
 
 utile : Picture -> Picture
 utile fish =
-    blank
+    let
+        north =
+            fish |> toss |> flip
+
+        west =
+            turns 1 north
+
+        south =
+            turns 2 north
+
+        east =
+            turns 3 north
+    in
+    over north (over west (over south east))
 
 
 
@@ -172,16 +185,35 @@ utile fish =
 
 side : Int -> Picture -> Picture
 side n fish =
-    blank
+    if n <= 0 then
+        blank
+
+    else
+        quartet (side (n - 1) fish) (side (n - 1) fish) (turn (ttile fish)) (ttile fish)
 
 
 
+-- turn side
+-- oside : Int -> Picture -> Picture
+-- oside n fish =
+--     if n <= 0 then
+--         blank
+--     else
+--         quartet (oside (n - 1) fish) fish (oside (n - 1) fish) fish
 -- Exercise 12
 
 
 corner : Int -> Picture -> Picture
 corner n fish =
-    blank
+    if n <= 0 then
+        blank
+
+    else
+        quartet
+            (corner (n - 1) fish)
+            (side (n - 1) fish)
+            (turn (side (n - 1) fish))
+            (utile fish)
 
 
 
@@ -190,4 +222,17 @@ corner n fish =
 
 squareLimit : Int -> Picture -> Picture
 squareLimit n fish =
-    blank
+    if n <= 0 then
+        blank
+
+    else
+        nonet
+            (corner n fish)
+            (side n fish)
+            (turns 3 (corner n fish))
+            (turns 1 (side n fish))
+            (utile fish)
+            (turns 3 (side n fish))
+            (turns 1 (corner n fish))
+            (turns 2 (side n fish))
+            (turns 2 (corner n fish))

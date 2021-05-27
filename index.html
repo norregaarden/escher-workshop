@@ -4760,6 +4760,291 @@ var $author$project$MainFish$placeInsideDiv = function (svg) {
 		_List_fromArray(
 			[svg]));
 };
+var $author$project$Picture$blank = function (_v0) {
+	return _List_Nil;
+};
+var $author$project$Box$splitVertically = F3(
+	function (m, n, _v0) {
+		var a = _v0.a;
+		var b = _v0.b;
+		var c = _v0.c;
+		var total = m + n;
+		var topR = m / total;
+		var botR = n / total;
+		return _Utils_Tuple2(
+			{
+				a: A2(
+					$author$project$Vector$add,
+					a,
+					A2($author$project$Vector$scale, botR, c)),
+				b: b,
+				c: A2($author$project$Vector$scale, topR, c)
+			},
+			{
+				a: a,
+				b: b,
+				c: A2($author$project$Vector$scale, botR, c)
+			});
+	});
+var $author$project$Picture$aboveRatio = F4(
+	function (m, n, p1, p2) {
+		return function (box) {
+			var _v0 = A3($author$project$Box$splitVertically, m, n, box);
+			var top = _v0.a;
+			var bot = _v0.b;
+			return _Utils_ap(
+				p1(top),
+				p2(bot));
+		};
+	});
+var $author$project$Picture$above = F2(
+	function (p1, p2) {
+		return A4($author$project$Picture$aboveRatio, 1, 1, p1, p2);
+	});
+var $author$project$Box$splitHorizontally = F3(
+	function (m, n, _v0) {
+		var a = _v0.a;
+		var b = _v0.b;
+		var c = _v0.c;
+		var total = m + n;
+		var rightR = n / total;
+		var leftR = m / total;
+		return _Utils_Tuple2(
+			{
+				a: a,
+				b: A2($author$project$Vector$scale, leftR, b),
+				c: c
+			},
+			{
+				a: A2(
+					$author$project$Vector$add,
+					a,
+					A2($author$project$Vector$scale, leftR, b)),
+				b: A2($author$project$Vector$scale, rightR, b),
+				c: c
+			});
+	});
+var $author$project$Picture$besideRatio = F4(
+	function (m, n, p1, p2) {
+		return function (box) {
+			var _v0 = A3($author$project$Box$splitHorizontally, m, n, box);
+			var left = _v0.a;
+			var right = _v0.b;
+			return _Utils_ap(
+				p1(left),
+				p2(right));
+		};
+	});
+var $author$project$Picture$beside = F2(
+	function (p1, p2) {
+		return A4($author$project$Picture$besideRatio, 1, 1, p1, p2);
+	});
+var $author$project$Picture$quartet = F4(
+	function (nw, ne, sw, se) {
+		return A2(
+			$author$project$Picture$beside,
+			A2($author$project$Picture$above, nw, sw),
+			A2($author$project$Picture$above, ne, se));
+	});
+var $elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
+var $author$project$Vector$neg = function (_v0) {
+	var x = _v0.x;
+	var y = _v0.y;
+	return {x: -x, y: -y};
+};
+var $author$project$Box$flipBox = function (_v0) {
+	var a = _v0.a;
+	var b = _v0.b;
+	var c = _v0.c;
+	return {
+		a: A2($author$project$Vector$add, a, b),
+		b: $author$project$Vector$neg(b),
+		c: c
+	};
+};
+var $author$project$Picture$flip = function (p) {
+	return A2($elm$core$Basics$composeR, $author$project$Box$flipBox, p);
+};
+var $author$project$Picture$ontop = F2(
+	function (p1, p2) {
+		return function (box) {
+			return _Utils_ap(
+				p1(box),
+				p2(box));
+		};
+	});
+var $author$project$Picture$over = $author$project$Picture$ontop;
+var $author$project$Vector$sub = F2(
+	function (v1, v2) {
+		return A2(
+			$author$project$Vector$add,
+			v1,
+			$author$project$Vector$neg(v2));
+	});
+var $author$project$Box$tossBox = function (_v0) {
+	var a = _v0.a;
+	var b = _v0.b;
+	var c = _v0.c;
+	return {
+		a: A2(
+			$author$project$Vector$add,
+			a,
+			A2(
+				$author$project$Vector$scale,
+				0.5,
+				A2($author$project$Vector$add, c, b))),
+		b: A2(
+			$author$project$Vector$scale,
+			0.5,
+			A2($author$project$Vector$add, c, b)),
+		c: A2(
+			$author$project$Vector$scale,
+			0.5,
+			A2($author$project$Vector$sub, c, b))
+	};
+};
+var $author$project$Picture$toss = function (p) {
+	return A2($elm$core$Basics$composeR, $author$project$Box$tossBox, p);
+};
+var $elm$core$Basics$identity = function (x) {
+	return x;
+};
+var $author$project$Picture$times = F2(
+	function (n, fn) {
+		return (n <= 0) ? $elm$core$Basics$identity : A2(
+			$elm$core$Basics$composeR,
+			fn,
+			A2($author$project$Picture$times, n - 1, fn));
+	});
+var $author$project$Box$turnBox = function (_v0) {
+	var a = _v0.a;
+	var b = _v0.b;
+	var c = _v0.c;
+	return {
+		a: A2($author$project$Vector$add, a, b),
+		b: c,
+		c: $author$project$Vector$neg(b)
+	};
+};
+var $author$project$Picture$turn = function (p) {
+	return A2($elm$core$Basics$composeR, $author$project$Box$turnBox, p);
+};
+var $author$project$Picture$turns = function (n) {
+	return A2($author$project$Picture$times, n, $author$project$Picture$turn);
+};
+var $author$project$Picture$ttile = function (fish) {
+	return A2(
+		$author$project$Picture$over,
+		fish,
+		A2(
+			$author$project$Picture$over,
+			$author$project$Picture$flip(
+				$author$project$Picture$toss(fish)),
+			A2(
+				$author$project$Picture$turns,
+				3,
+				$author$project$Picture$flip(
+					$author$project$Picture$toss(fish)))));
+};
+var $author$project$Picture$side = F2(
+	function (n, fish) {
+		return (n <= 0) ? $author$project$Picture$blank : A4(
+			$author$project$Picture$quartet,
+			A2($author$project$Picture$side, n - 1, fish),
+			A2($author$project$Picture$side, n - 1, fish),
+			$author$project$Picture$turn(
+				$author$project$Picture$ttile(fish)),
+			$author$project$Picture$ttile(fish));
+	});
+var $author$project$Picture$utile = function (fish) {
+	var north = $author$project$Picture$flip(
+		$author$project$Picture$toss(fish));
+	var south = A2($author$project$Picture$turns, 2, north);
+	var west = A2($author$project$Picture$turns, 1, north);
+	var east = A2($author$project$Picture$turns, 3, north);
+	return A2(
+		$author$project$Picture$over,
+		north,
+		A2(
+			$author$project$Picture$over,
+			west,
+			A2($author$project$Picture$over, south, east)));
+};
+var $author$project$Picture$corner = F2(
+	function (n, fish) {
+		return (n <= 0) ? $author$project$Picture$blank : A4(
+			$author$project$Picture$quartet,
+			A2($author$project$Picture$corner, n - 1, fish),
+			A2($author$project$Picture$side, n - 1, fish),
+			$author$project$Picture$turn(
+				A2($author$project$Picture$side, n - 1, fish)),
+			$author$project$Picture$utile(fish));
+	});
+var $author$project$Picture$nonet = F9(
+	function (nw, nm, ne, mw, mm, me, sw, sm, se) {
+		return A4(
+			$author$project$Picture$besideRatio,
+			1,
+			2,
+			A4(
+				$author$project$Picture$aboveRatio,
+				1,
+				2,
+				nw,
+				A4($author$project$Picture$aboveRatio, 1, 1, mw, sw)),
+			A4(
+				$author$project$Picture$besideRatio,
+				1,
+				1,
+				A4(
+					$author$project$Picture$aboveRatio,
+					1,
+					2,
+					nm,
+					A4($author$project$Picture$aboveRatio, 1, 1, mm, sm)),
+				A4(
+					$author$project$Picture$aboveRatio,
+					1,
+					2,
+					ne,
+					A4($author$project$Picture$aboveRatio, 1, 1, me, se))));
+	});
+var $author$project$Picture$squareLimit = F2(
+	function (n, fish) {
+		return (n <= 0) ? $author$project$Picture$blank : A9(
+			$author$project$Picture$nonet,
+			A2($author$project$Picture$corner, n, fish),
+			A2($author$project$Picture$side, n, fish),
+			A2(
+				$author$project$Picture$turns,
+				3,
+				A2($author$project$Picture$corner, n, fish)),
+			A2(
+				$author$project$Picture$turns,
+				1,
+				A2($author$project$Picture$side, n, fish)),
+			$author$project$Picture$utile(fish),
+			A2(
+				$author$project$Picture$turns,
+				3,
+				A2($author$project$Picture$side, n, fish)),
+			A2(
+				$author$project$Picture$turns,
+				1,
+				A2($author$project$Picture$corner, n, fish)),
+			A2(
+				$author$project$Picture$turns,
+				2,
+				A2($author$project$Picture$side, n, fish)),
+			A2(
+				$author$project$Picture$turns,
+				2,
+				A2($author$project$Picture$corner, n, fish)));
+	});
 var $author$project$Rendering$acolor = '#88499c';
 var $author$project$Rendering$bcolor = '#2381bf';
 var $author$project$Rendering$ccolor = '#27b15b';
@@ -5284,17 +5569,16 @@ var $author$project$Rendering$toSvgWithBoxes = F3(
 var $author$project$MainFish$main = function () {
 	var fish = $author$project$Fitting$createPicture($author$project$Fishy$fishShapes);
 	var box = {
-		a: {x: 125.0, y: 75.0},
-		b: {x: 250.0, y: 0.0},
-		c: {x: 0.0, y: 250.0}
+		a: {x: 50.0, y: 50.0},
+		b: {x: 500.0, y: 0.0},
+		c: {x: 0.0, y: 500.0}
 	};
 	return $author$project$MainFish$placeInsideDiv(
 		A3(
 			$author$project$Rendering$toSvgWithBoxes,
-			_Utils_Tuple2(500, 500),
-			_List_fromArray(
-				[box]),
-			fish(box)));
+			_Utils_Tuple2(600, 600),
+			_List_Nil,
+			A3($author$project$Picture$squareLimit, 4, fish, box)));
 }();
 _Platform_export({'MainFish':{'init':_VirtualDom_init($author$project$MainFish$main)(0)(0)}});}(this));
 
